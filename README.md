@@ -15,7 +15,7 @@
 2. 运行启动脚本
 
 ```bash
-$ cd example
+$ cd example/server
 $ ./build.sh
 $ ./run.sh
 ```
@@ -23,5 +23,8 @@ $ ./run.sh
 3. 运行客户端
 
 ```bash
-$ go run client/main.go
+$ cd example/client
+$ ./run.sh
 ```
+
+注：目前Logger尚未实现，因此暂时无法查看日志。
