@@ -2,8 +2,10 @@ package server
 
 import (
 	"fmt"
+	"github.com/Carey6918/PikaRPC/config"
 	"github.com/Carey6918/PikaRPC/helper"
 	consul "github.com/hashicorp/consul/api"
+	"google.golang.org/grpc/grpclog"
 	"time"
 )
 
@@ -12,7 +14,7 @@ import (
 	https://godoc.org/github.com/hashicorp/consul/api#pkg-index
   */
 
-const consulPort  = "8500"
+const consulPort = "8500"
 
 type registerContext struct {
 	ServiceName                    string
@@ -24,9 +26,9 @@ type registerContext struct {
 
 func newRegisterContest() *registerContext {
 	return &registerContext{
-		ServiceName: ServiceConf.ServiceName,
-		Tags:        []string{},
-		Port:        helper.S2I(ServiceConf.ServicePort),
+		ServiceName:                    config.ServiceConf.ServiceName,
+		Tags:                           []string{},
+		Port:                           helper.S2I(config.ServiceConf.ServicePort),
 		DeregisterCriticalServiceAfter: 1 * time.Minute,
 		Interval:                       10 * time.Second,
 	}
@@ -37,7 +39,7 @@ func (r *registerContext) Register() error {
 	config.Address = helper.GetLocalAddress(consulPort)
 	client, err := consul.NewClient(config)
 	if err != nil {
-		fmt.Errorf("consul new client failed, err= %v", err)
+		grpclog.Errorf("consul new client failed, err= %v", err)
 		return err
 	}
 	agent := client.Agent()
@@ -48,7 +50,6 @@ func (r *registerContext) Register() error {
 		Tags:    r.Tags,
 		Port:    r.Port,
 		Address: localIP,
-		//todo 健康检查的编码还没完成，服务在1分钟后会挂掉，所以先注释了
 		Check: &consul.AgentServiceCheck{ // 开启健康检查
 			GRPC:                           fmt.Sprintf("%v:%v/%v", localIP, r.Port, r.ServiceName), //grpc 支持，执行健康检查的地址，service 会传到 Health.Check 函数中
 			Interval:                       r.Interval.String(),                                     // 健康检查间隔，默认为10s

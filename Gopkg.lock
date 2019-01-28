@@ -349,6 +349,7 @@
     "github.com/opentracing/opentracing-go",
     "github.com/openzipkin/zipkin-go-opentracing",
     "google.golang.org/grpc",
+    "google.golang.org/grpc/grpclog",
     "google.golang.org/grpc/health/grpc_health_v1",
     "google.golang.org/grpc/reflection",
     "google.golang.org/grpc/resolver",

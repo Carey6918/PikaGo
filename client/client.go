@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"github.com/Carey6918/PikaRPC/config"
 	"github.com/Carey6918/PikaRPC/tracing"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"google.golang.org/grpc"
@@ -23,6 +24,8 @@ type Client struct {
 var GClient *Client
 
 func Init(opts ...Options) {
+	config.Init()
+
 	var client Client
 	client.options = &Option{
 		watchInterval: 20 * time.Second,
@@ -48,7 +51,7 @@ func GetConn(serviceName string) (*grpc.ClientConn, error) {
 		return nil, err
 	}
 
-	tracer, err := tracing.NewZipkinTracer(serviceName)
+	tracer, err := tracing.NewZipkinTracer(config.ServiceConf.ServiceName)
 	if err != nil {
 		return nil, err
 	}

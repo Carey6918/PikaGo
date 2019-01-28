@@ -3,12 +3,14 @@ package server
 import (
 	"fmt"
 	"github.com/Carey6918/PikaRPC/client"
+	"github.com/Carey6918/PikaRPC/config"
 	"github.com/Carey6918/PikaRPC/helper"
 	"github.com/Carey6918/PikaRPC/tracing"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/resolver"
@@ -29,19 +31,19 @@ var GServer *Server // 全局服务
 var tracer opentracing.Tracer
 
 func Init() {
-	initConfig()
+	config.Init()
 	resolver.Register(client.NewBuilder("test")) // consul lb
 
 	// 通过consul注册服务
 	if err := newRegisterContest().Register(); err != nil {
-		fmt.Errorf("consul register failed, err= %v", err)
+		grpclog.Errorf("consul register failed, err= %v", err)
 	}
 
 	// 初始化zepkin跟踪器
 	var err error
-	tracer, err = tracing.NewZipkinTracer(ServiceConf.ServiceName)
+	tracer, err = tracing.NewZipkinTracer(config.ServiceConf.ServiceName)
 	if err != nil {
-		fmt.Errorf("init tracing failed, err= %v", err)
+		grpclog.Errorf("init tracing failed, err= %v", err)
 	}
 
 	newServer(WithGRPCOpts(grpc.ConnectionTimeout(1*time.Second),
@@ -79,11 +81,11 @@ func waitSignal(errCh chan error) error {
 			switch sig {
 			// exit forcely
 			case syscall.SIGTERM: // 结束程序(可以被捕获、阻塞或忽略)
-				fmt.Printf("stop run, signals= %v", sig.String())
+				grpclog.Infof("stop run, signals= %v", sig.String())
 				return nil
 			case syscall.SIGHUP, syscall.SIGINT: // 终端连接断开/用户发送(ctrl+c)结束
 				GServer.stop()
-				fmt.Printf("stop run, signals= %v", sig.String())
+				grpclog.Infof("stop run, signals= %v", sig.String())
 				return nil
 			}
 		case err := <-errCh:
@@ -111,9 +113,9 @@ func (s *Server) stop() error {
 }
 
 func (s *Server) listen() error {
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", helper.GetLocalIP(), ServiceConf.ServicePort))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", helper.GetLocalIP(), config.ServiceConf.ServicePort))
 	if err != nil {
-		fmt.Errorf("listen tcp failed, err= %v", err)
+		grpclog.Errorf("listen tcp failed, err= %v", err)
 		return err
 	}
 	s.listener = listener
