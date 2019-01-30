@@ -149,6 +149,14 @@
   revision = "19bbd39e421bdf3559d5025fb2c760f5ffa56233"
 
 [[projects]]
+  digest = "1:0a69a1c0db3591fcefb47f115b224592c8dfa4368b7ba9fae509d5e16cdc95c8"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
+  version = "v1.0.1"
+
+[[projects]]
   branch = "master"
   digest = "1:a64e323dc06b73892e5bb5d040ced475c4645d456038333883f58934abbf6f72"
   name = "github.com/kr/logfmt"
@@ -233,6 +241,22 @@
   revision = "3113b8401b8a98917cde58f8bbd42a1b1c03b1fd"
 
 [[projects]]
+  digest = "1:87c2e02fb01c27060ccc5ba7c5a407cc91147726f8f40b70cceeedbc52b1f3a8"
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
+  version = "v1.3.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:fde12c4da6237363bf36b81b59aa36a43d28061167ec4acb0d41fc49464e28b9"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  pruneopts = "UT"
+  revision = "ccddf3741a0cfcee0a62d34c18c2c5417a3761af"
+
+[[projects]]
   branch = "master"
   digest = "1:fc7b6b4384e1e849d99eab58eca4f8c0a76bad4699117d5077a9a5c3c83e289e"
   name = "golang.org/x/net"
@@ -250,9 +274,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f6f6d9d6f80c9e32acc0f4f3b904e0b9f5b18a7757c2ef941121bd79a10e7bdf"
+  digest = "1:43cde116ff48f299eddb7e6515677e6d0a2c915854bb05a333877f07c3bb3033"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = "UT"
   revision = "11f53e03133963fb11ae0588e08b5e0b85be8be5"
 
@@ -348,6 +375,7 @@
     "github.com/hashicorp/consul/api",
     "github.com/opentracing/opentracing-go",
     "github.com/openzipkin/zipkin-go-opentracing",
+    "github.com/sirupsen/logrus",
     "google.golang.org/grpc",
     "google.golang.org/grpc/grpclog",
     "google.golang.org/grpc/health/grpc_health_v1",
