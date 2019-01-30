@@ -5,6 +5,7 @@ import (
 	"github.com/Carey6918/PikaRPC/client"
 	"github.com/Carey6918/PikaRPC/config"
 	"github.com/Carey6918/PikaRPC/helper"
+	"github.com/Carey6918/PikaRPC/log"
 	"github.com/Carey6918/PikaRPC/tracing"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
@@ -12,6 +13,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/resolver"
@@ -47,9 +49,12 @@ func Init() {
 		logrus.Errorf("init tracing failed, err= %v", err)
 	}
 
-	// 初始化logrus日志链
 	entry := logrus.NewEntry(logrus.StandardLogger())
-	//grpc_logrus.ReplaceGrpcLogger(entry)
+	// 将grpclog替换为logrus
+	// grpc_logrus.ReplaceGrpcLogger(entry) （不用这个，原因写在log/logger.go里）
+	grpclog.SetLoggerV2(log.NewLogger(entry).WithField("system", "system"))
+
+	// 初始化logrus日志链
 	newServer(WithGRPCOpts(grpc.ConnectionTimeout(1*time.Second),
 		grpc_middleware.WithUnaryServerChain(
 			otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads()),

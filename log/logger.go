@@ -13,9 +13,9 @@ type Logger struct {
 	e *logrus.Entry
 }
 
-func NewLogger() *Logger {
+func NewLogger(entry *logrus.Entry) *Logger {
 	return &Logger{
-		e: logrus.NewEntry(logrus.StandardLogger()),
+		e: entry,
 	}
 }
 

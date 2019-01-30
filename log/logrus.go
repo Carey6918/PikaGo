@@ -3,7 +3,6 @@ package log
 import (
 	"context"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc/grpclog"
 	"os"
 )
 
@@ -13,9 +12,6 @@ const (
 )
 
 func init() {
-	// 将grpclog替换为logrus
-	grpclog.SetLoggerV2(NewLogger().WithField("system", "system"))
-
 	// 输出样式
 	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 
@@ -26,6 +22,7 @@ func init() {
 	logrus.SetLevel(logrus.DebugLevel)
 }
 
+// todo 补充ctx的to_cluster & from_cluster
 func With(ctx context.Context) *logrus.Entry {
 	fields := logrus.Fields{}
 	if service, ok := ctx.Value(Service).(string); ok {
