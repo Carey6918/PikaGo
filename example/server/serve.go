@@ -23,7 +23,7 @@ func (s *AddServerImpl) Add(ctx context.Context, req *add.AddRequest) (*add.AddR
 	b := req.GetB()
 	sum := a + b
 
-	log.Logger(ctx).Infof("received a= %v, b= %v, sum= %v", a, b, sum)
+	log.With(ctx).Infof("received a= %v, b= %v, sum= %v", a, b, sum)
 	return &add.AddResponse{
 		Sum: sum,
 	}, nil

@@ -7,6 +7,7 @@ import (
 	"github.com/Carey6918/PikaRPC/helper"
 	"github.com/Carey6918/PikaRPC/tracing"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
@@ -46,9 +47,15 @@ func Init() {
 		logrus.Errorf("init tracing failed, err= %v", err)
 	}
 
+	// 初始化logrus日志链
+	entry := logrus.NewEntry(logrus.StandardLogger())
+	//grpc_logrus.ReplaceGrpcLogger(entry)
 	newServer(WithGRPCOpts(grpc.ConnectionTimeout(1*time.Second),
-		grpc_middleware.WithUnaryServerChain(otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads()))))
+		grpc_middleware.WithUnaryServerChain(
+			otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads()),
+			grpc_logrus.UnaryServerInterceptor(entry))))
 
+	// 注册健康检查的服务
 	grpc_health_v1.RegisterHealthServer(GetGRPCServer(), &HealthServerImpl{})
 }
 

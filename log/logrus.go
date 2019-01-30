@@ -3,6 +3,7 @@ package log
 import (
 	"context"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc/grpclog"
 	"os"
 )
 
@@ -12,18 +13,20 @@ const (
 )
 
 func init() {
-	// Log as JSON instead of the default ASCII formatter.
+	// 将grpclog替换为logrus
+	grpclog.SetLoggerV2(NewLogger().WithField("system", "system"))
+
+	// 输出样式
 	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 
-	// Output to stdout instead of the default stderr
-	// Can be any io.Writer, see below for File example
+	// 设置output
 	logrus.SetOutput(os.Stdout)
 
-	// Only log the debug severity or above.
+	// 设置最低loglevel
 	logrus.SetLevel(logrus.DebugLevel)
 }
 
-func Logger(ctx context.Context) *logrus.Entry {
+func With(ctx context.Context) *logrus.Entry {
 	fields := logrus.Fields{}
 	if service, ok := ctx.Value(Service).(string); ok {
 		fields[Service] = service

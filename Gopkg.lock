@@ -81,19 +81,21 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:5d1b5a25486fc7d4e133646d834f6fca7ba1cef9903d40e7aa786c41b89e9e91"
+  branch = "master"
+  digest = "1:99186569be6cdcc0d15fb5c9094d15b9e551f8d0e967ed7a09692ab05c6b263b"
   name = "github.com/golang/protobuf"
   packages = [
+    "jsonpb",
     "proto",
     "protoc-gen-go/descriptor",
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
+    "ptypes/struct",
     "ptypes/timestamp",
   ]
   pruneopts = "UT"
-  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
-  version = "v1.2.0"
+  revision = "347cf4a86c1cb8d262994d8ef5924d4576c5b331"
 
 [[projects]]
   branch = "master"
@@ -104,9 +106,16 @@
   revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
-  digest = "1:1168584a5881d371e96cb0e66ef6db71d7cef0856cc7f311490bc856627f8328"
+  digest = "1:1dd79f72341b3def93efdc8e2832950c11cd591087493c7f466077543bba9a03"
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
-  packages = ["."]
+  packages = [
+    ".",
+    "logging",
+    "logging/logrus",
+    "logging/logrus/ctxlogrus",
+    "tags",
+    "tags/logrus",
+  ]
   pruneopts = "UT"
   revision = "c250d6563d4d4c20252cd865923440e829844f4e"
   version = "v1.0.0"
@@ -371,6 +380,7 @@
   input-imports = [
     "github.com/golang/protobuf/proto",
     "github.com/grpc-ecosystem/go-grpc-middleware",
+    "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus",
     "github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc",
     "github.com/hashicorp/consul/api",
     "github.com/opentracing/opentracing-go",

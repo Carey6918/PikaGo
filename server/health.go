@@ -18,12 +18,12 @@ func (s *HealthServerImpl) Check(ctx context.Context, req *health.HealthCheckReq
 	_, err := client.GetConn(req.GetService())
 	defer client.Close(req.GetService())
 	if err != nil {
-		log.Logger(ctx).Errorf("health check to %v failed, err= %v", req.GetService(), err)
+		log.With(ctx).Errorf("health check to %v failed, err= %v", req.GetService(), err)
 		return &health.HealthCheckResponse{
 			Status: health.HealthCheckResponse_NOT_SERVING,
 		}, nil
 	}
-	log.Logger(ctx).Infof("health check to %v success", req.GetService())
+	log.With(ctx).Infof("health check to %v success", req.GetService())
 	return &health.HealthCheckResponse{
 		Status: health.HealthCheckResponse_SERVING,
 	}, nil

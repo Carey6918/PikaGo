@@ -12,7 +12,7 @@ import (
 /**
 	使用consul进行服务发现与服务注册
 	https://godoc.org/github.com/hashicorp/consul/api#pkg-index
-  */
+ **/
 
 const consulPort = "8500"
 
