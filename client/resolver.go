@@ -3,7 +3,7 @@ package client
 import (
 	"github.com/Carey6918/PikaRPC/helper"
 	"github.com/hashicorp/consul/api"
-	"google.golang.org/grpc/grpclog"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/resolver"
 	"sync"
 	"time"
@@ -66,7 +66,7 @@ func (r *ConsulResolver) resolve() {
 
 		address := s.ServiceAddress
 		port := s.ServicePort
-		grpclog.Infof("address= %v, port= %v", address, port)
+		logrus.Infof("address= %v, port= %v", address, port)
 		if address == "" {
 			address = s.Address
 		}

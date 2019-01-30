@@ -5,7 +5,7 @@ import (
 	"github.com/Carey6918/PikaRPC/config"
 	"github.com/Carey6918/PikaRPC/helper"
 	consul "github.com/hashicorp/consul/api"
-	"google.golang.org/grpc/grpclog"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -39,7 +39,7 @@ func (r *registerContext) Register() error {
 	config.Address = helper.GetLocalAddress(consulPort)
 	client, err := consul.NewClient(config)
 	if err != nil {
-		grpclog.Errorf("consul new client failed, err= %v", err)
+		logrus.Errorf("consul new client failed, err= %v", err)
 		return err
 	}
 	agent := client.Agent()

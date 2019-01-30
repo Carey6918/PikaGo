@@ -5,7 +5,7 @@
 - [x] 服务注册与发现 (consul)
 - [x] 健康检查
 - [ ] 调用链追踪 (opentracing + zipkin)
-- [ ] 调用链路日志 (zap or logrus)
+- [ ] 调用链路日志 (logrus)
 - [ ] 各项指标监控
 
 使用指南：

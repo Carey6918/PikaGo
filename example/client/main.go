@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"github.com/Carey6918/PikaRPC/client"
+	"github.com/Carey6918/PikaRPC/config"
 	"github.com/Carey6918/PikaRPC/example/proto"
-	"google.golang.org/grpc/grpclog"
+	"github.com/Carey6918/PikaRPC/log"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -17,7 +19,7 @@ func main() {
 	conn, err := client.GetConn(ServiceName)
 	defer client.Close(ServiceName)
 	if err != nil {
-		grpclog.Fatalf("get conn failed, err= %v", err)
+		logrus.Fatalf("get conn failed, err= %v", err)
 	}
 
 	cli := add.NewAddServiceClient(conn)
@@ -25,9 +27,12 @@ func main() {
 		A: 1,
 		B: 1,
 	}
-	resp, err := cli.Add(context.Background(), req)
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, log.RequestID, "test")
+	ctx = context.WithValue(ctx, log.Service, config.ServiceConf.ServiceName)
+	resp, err := cli.Add(ctx, req)
 	if err != nil {
-		grpclog.Fatalf("add failed, err= %v", err)
+		log.Logger(ctx).Fatalf("add failed, err= %v", err)
 	}
-	grpclog.Infof("resp= %v", resp)
+	log.Logger(ctx).Infof("resp= %v", resp)
 }
