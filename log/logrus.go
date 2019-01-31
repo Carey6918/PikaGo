@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	Service   = "service"
-	RequestID = "request_id"
+	FromService = "from_service"
+	ToService   = "to_service"
+	RequestID   = "request_id"
 )
 
 func init() {
@@ -22,11 +23,13 @@ func init() {
 	logrus.SetLevel(logrus.DebugLevel)
 }
 
-// todo 补充ctx的to_cluster & from_cluster
 func With(ctx context.Context) *logrus.Entry {
 	fields := logrus.Fields{}
-	if service, ok := ctx.Value(Service).(string); ok {
-		fields[Service] = service
+	if fromService, ok := ctx.Value(FromService).(string); ok {
+		fields[FromService] = fromService
+	}
+	if toService, ok := ctx.Value(ToService).(string); ok {
+		fields[ToService] = toService
 	}
 	if requestID, ok := ctx.Value(RequestID).(string); ok {
 		fields[RequestID] = requestID

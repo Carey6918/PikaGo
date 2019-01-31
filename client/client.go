@@ -3,9 +3,13 @@ package client
 import (
 	"fmt"
 	"github.com/Carey6918/PikaRPC/config"
+	"github.com/Carey6918/PikaRPC/log"
 	"github.com/Carey6918/PikaRPC/tracing"
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/resolver"
 	"sync"
 	"time"
@@ -55,10 +59,16 @@ func GetConn(serviceName string) (*grpc.ClientConn, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	entry := logrus.NewEntry(logrus.StandardLogger())
+	// 将grpclog替换为logrus
+	// grpc_logrus.ReplaceGrpcLogger(entry) （不用这个，原因写在log/logger.go里）
+	grpclog.SetLoggerV2(log.NewLogger(entry).WithField("system", "system"))
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", service.Address, service.Port),
 		grpc.WithInsecure(),
-		grpc.WithUnaryInterceptor(
-			otgrpc.OpenTracingClientInterceptor(tracer, otgrpc.LogPayloads())))
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(tracer, otgrpc.LogPayloads())),
+		grpc.WithUnaryInterceptor(grpc_logrus.UnaryClientInterceptor(entry)),
+		grpc.WithUnaryInterceptor(FillContextInterceptor(serviceName)))
 	if err != nil {
 		return nil, err
 	}

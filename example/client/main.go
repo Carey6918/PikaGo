@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"github.com/Carey6918/PikaRPC/client"
-	"github.com/Carey6918/PikaRPC/config"
 	"github.com/Carey6918/PikaRPC/example/proto"
 	"github.com/Carey6918/PikaRPC/log"
 	"github.com/sirupsen/logrus"
@@ -29,10 +28,9 @@ func main() {
 	}
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, log.RequestID, "test")
-	ctx = context.WithValue(ctx, log.Service, config.ServiceConf.ServiceName)
 	resp, err := cli.Add(ctx, req)
 	if err != nil {
-		log.Logger(ctx).Fatalf("add failed, err= %v", err)
+		log.With(ctx).Fatalf("add failed, err= %v", err)
 	}
-	log.Logger(ctx).Infof("resp= %v", resp)
+	log.With(ctx).Infof("resp= %v", resp)
 }
