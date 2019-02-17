@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"github.com/Carey6918/PikaRPC/client"
 	"github.com/Carey6918/PikaRPC/config"
@@ -42,7 +43,7 @@ func Init() {
 		logrus.Errorf("consul register failed, err= %v", err)
 	}
 
-	// 初始化zepkin跟踪器
+	// 初始化zipkin跟踪器
 	var err error
 	tracer, err = tracing.NewZipkinTracer(config.ServiceConf.ServiceName)
 	if err != nil {
@@ -55,11 +56,14 @@ func Init() {
 	grpclog.SetLoggerV2(log.NewLogger(entry).WithField("system", "system"))
 
 	// 初始化logrus日志链
+	// 初始化prometheus监控
 	newServer(WithGRPCOpts(grpc.ConnectionTimeout(1*time.Second),
 		grpc_middleware.WithUnaryServerChain(
 			otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads()),
-			grpc_logrus.UnaryServerInterceptor(entry))))
+			grpc_logrus.UnaryServerInterceptor(entry),
+			prometheusMetrics.UnaryServerInterceptor())))
 
+	prometheusMetrics.InitializeMetrics(GServer.gServer)
 	// 注册健康检查的服务
 	grpc_health_v1.RegisterHealthServer(GetGRPCServer(), &HealthServerImpl{})
 }
@@ -136,4 +140,8 @@ func (s *Server) listen() error {
 
 func GetGRPCServer() *grpc.Server {
 	return GServer.gServer
+}
+
+func transfer(fn func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error)) grpc.UnaryServerInterceptor {
+	return fn
 }

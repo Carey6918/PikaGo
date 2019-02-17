@@ -68,7 +68,8 @@ func GetConn(serviceName string) (*grpc.ClientConn, error) {
 		grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(tracer, otgrpc.LogPayloads())),
 		grpc.WithUnaryInterceptor(grpc_logrus.UnaryClientInterceptor(entry)),
-		grpc.WithUnaryInterceptor(FillContextInterceptor(serviceName)))
+		grpc.WithUnaryInterceptor(FillContextInterceptor(serviceName)),
+		grpc.WithUnaryInterceptor(prometheusMetrics.UnaryClientInterceptor()))
 	if err != nil {
 		return nil, err
 	}
