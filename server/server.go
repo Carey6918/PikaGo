@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"github.com/Carey6918/PikaRPC/client"
 	"github.com/Carey6918/PikaRPC/config"
@@ -80,6 +79,9 @@ func newServer(opts ...Options) {
 }
 
 func Run() error {
+	// 开始监听prometheus服务
+	go startMetrics()
+
 	errCh := make(chan error, 1)
 	go func() {
 		errCh <- GServer.serve()
@@ -140,8 +142,4 @@ func (s *Server) listen() error {
 
 func GetGRPCServer() *grpc.Server {
 	return GServer.gServer
-}
-
-func transfer(fn func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error)) grpc.UnaryServerInterceptor {
-	return fn
 }
